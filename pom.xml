@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>br.com.fiap</groupId>
-	<artifactId>checkpoint3</artifactId>
+	<artifactId>checkpoint4</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>checkpoint3</name>
+	<name>checkpoint4</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>

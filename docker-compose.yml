@@ -1,36 +1,37 @@
 services:
   db:
-    image: postgres:16
-    container_name: checkpoint_db
+    image: mysql:8.0
     environment:
-      POSTGRES_DB: appdb
-      POSTGRES_USER: app
-      POSTGRES_PASSWORD: app123
-      TZ: America/Sao_Paulo
-    volumes:
-      - dbdata:/var/lib/postgresql/data
+      - MYSQL_ROOT_PASSWORD=root_pwd
+      - MYSQL_USER=new_user
+      - MYSQL_PASSWORD=my_pwd
+      - MYSQL_DATABASE=api
+    ports:
+      - "3306:3306"
+    networks:
+      - app-networks
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U app -d appdb"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
       interval: 10s
-      timeout: 3s
-      retries: 10
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   api:
-    image: rafaelngomes/checkpoint4-api:1.0.0
-    container_name: checkpoint_api
+    build: .
     depends_on:
       db:
         condition: service_healthy
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/appdb
-      SPRING_DATASOURCE_USERNAME: app
-      SPRING_DATASOURCE_PASSWORD: app123
-      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
-      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      SPRING_H2_CONSOLE_ENABLED: "false"
-      TZ: America/Sao_Paulo
     ports:
       - "8080:8080"
-volumes:
-  dbdata:
+    environment:
+      - DB_SERVER=db
+      - DB_PORT=3306
+      - DB_DATABASE=api
+      - DB_USER=new_user
+      - DB_PASSWORD=my_pwd
+    networks:
+      - app-networks
+
+networks:
+  app-networks:
